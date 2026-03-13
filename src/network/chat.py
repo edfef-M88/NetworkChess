@@ -1,12 +1,30 @@
-"""Чат участников партии."""
+"""Чат участников партии.
+
+Модуль содержит простую реализацию чата: отправка сообщений игроками,
+системные сообщения, ограничение длины сообщений и размера истории, а также
+операции модерации (mute/unmute) в рамках конкретного матча.
+
+Classes:
+    MatchChat: Хранилище сообщений и операции чата.
+"""
 
 from datetime import datetime
 from typing import List, Dict
 
+
 class MatchChat:
-    """Управление чатом в игре."""
+    """Управление чатом в игре.
+
+    Attributes:
+        messages: История сообщений (каждое сообщение — словарь).
+        max_message_length: Максимальная длина текста сообщения.
+        max_history: Максимальный размер истории.
+        muted_users: Набор идентификаторов пользователей в муте.
+        chat_enabled: Флаг включённости чата.
+    """
 
     def __init__(self):
+        """Создать чат с пустой историей."""
         self.messages: List[Dict] = []
         self.max_message_length = 500
         self.max_history = 100
@@ -14,7 +32,16 @@ class MatchChat:
         self.chat_enabled = True
 
     def send_message(self, sender_id: str, sender_name: str, text: str) -> tuple[bool, str]:
-        """Отправить сообщение в чат."""
+        """Отправить сообщение в чат.
+
+        Args:
+            sender_id: Идентификатор отправителя.
+            sender_name: Отображаемое имя.
+            text: Текст сообщения.
+
+        Returns:
+            tuple[bool, str]: (успех, текст или причина отказа).
+        """
         if not self.chat_enabled:
             return False, "Чат отключен"
 
@@ -26,14 +53,14 @@ class MatchChat:
             return False, "Пустое сообщение"
 
         if len(text) > self.max_message_length:
-            text = text[:self.max_message_length]
+            text = text[: self.max_message_length]
 
         message = {
             "sender_id": sender_id,
             "sender_name": sender_name,
             "text": text,
             "timestamp": datetime.now().isoformat(),
-            "type": "message"
+            "type": "message",
         }
 
         self.messages.append(message)
@@ -47,13 +74,22 @@ class MatchChat:
             "sender_name": "Система",
             "text": text,
             "timestamp": datetime.now().isoformat(),
-            "type": "system"
+            "type": "system",
         }
         self.messages.append(message)
         self._trim_history()
 
     def send_emote(self, sender_id: str, sender_name: str, emote: str) -> bool:
-        """Отправить эмоцию."""
+        """Отправить реакцию (emote) в чат.
+
+        Args:
+            sender_id: Идентификатор отправителя.
+            sender_name: Имя.
+            emote: Код реакции.
+
+        Returns:
+            bool: True, если реакция допустима и добавлена.
+        """
         valid_emotes = ["wave", "smile", "think", "gg", "glhf"]
         if emote not in valid_emotes:
             return False
@@ -63,21 +99,25 @@ class MatchChat:
             "sender_name": sender_name,
             "emote": emote,
             "timestamp": datetime.now().isoformat(),
-            "type": "emote"
+            "type": "emote",
         }
         self.messages.append(message)
         return True
 
     def get_messages(self, limit: int = 50) -> List[Dict]:
-        """Получить последние сообщения."""
+        """Получить последние сообщения.
+
+        Args:
+            limit: Максимальное количество.
+
+        Returns:
+            List[Dict]: Список сообщений.
+        """
         return self.messages[-limit:]
 
     def get_messages_since(self, timestamp: str) -> List[Dict]:
-        """Получить сообщения после определенного времени."""
-        return [
-            msg for msg in self.messages
-            if msg["timestamp"] > timestamp
-        ]
+        """Получить сообщения после определённого времени."""
+        return [msg for msg in self.messages if msg["timestamp"] > timestamp]
 
     def clear_history(self) -> None:
         """Очистить историю чата."""
@@ -112,12 +152,12 @@ class MatchChat:
         self.send_system_message("Чат отключен")
 
     def _trim_history(self) -> None:
-        """Обрезать историю до максимального размера."""
+        """Обрезать историю до max_history."""
         if len(self.messages) > self.max_history:
-            self.messages = self.messages[-self.max_history:]
+            self.messages = self.messages[-self.max_history :]
 
     def filter_profanity(self, text: str) -> str:
-        """Фильтр нецензурной лексики."""
+        """Простейший фильтр нецензурной лексики (заглушка)."""
         bad_words = ["badword1", "badword2"]
         for word in bad_words:
             text = text.replace(word, "***")
@@ -130,10 +170,7 @@ class MatchChat:
     def delete_message(self, timestamp: str) -> bool:
         """Удалить сообщение по времени."""
         original_length = len(self.messages)
-        self.messages = [
-            msg for msg in self.messages
-            if msg["timestamp"] != timestamp
-        ]
+        self.messages = [msg for msg in self.messages if msg["timestamp"] != timestamp]
         return len(self.messages) < original_length
 
     def export_chat_log(self) -> str:

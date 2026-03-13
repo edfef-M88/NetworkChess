@@ -1,17 +1,59 @@
-"""Статистика и история партий."""
+"""Статистика и история сыгранных партий.
+
+Модуль содержит сервис :class:`StatisticsService`, который накапливает историю
+партий и вычисляет простые метрики по игрокам:
+
+- общий баланс побед/поражений/ничьих;
+- серии побед;
+- статистику по цветам (белыми/чёрными);
+- статистику по дебютам и контролю времени;
+- активность игрока за период и «тепловую карту» по дням недели;
+- статистику по конкретным оппонентам.
+
+В учебной реализации данные хранятся в памяти (в списках/словарях). Сохранение
+на диск может выполняться отдельным модулем хранилища.
+
+Classes:
+    StatisticsService: Сбор статистики и вычисление отчётов по истории партий.
+"""
 
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List
+
 
 class StatisticsService:
-    """Сервис для сбора и анализа статистики."""
+    """Сервис для сбора и анализа статистики игроков.
 
-    def __init__(self):
+    Сервис получает на вход данные завершённых партий (в виде словаря) и
+    преобразует их в унифицированную запись истории. Затем обновляет агрегированную
+    статистику по каждому игроку.
+
+    Attributes:
+        games_history: Список записей партий (каждая запись — dict с полями
+            game_id, white_player, black_player, result и др.).
+        player_stats: Словарь агрегированной статистики игрока (имя → dict).
+    """
+
+    def __init__(self) -> None:
+        """Создать сервис статистики с пустыми структурами.
+
+        Returns:
+            None
+        """
         self.games_history: List[dict] = []
         self.player_stats: Dict[str, dict] = {}
 
     def record_game(self, game_data: dict) -> None:
-        """Записать завершенную игру."""
+        """Записать завершённую игру в историю и обновить статистику игроков.
+
+        Args:
+            game_data: Словарь данных партии. Ожидаемые ключи (необязательные):
+                id, white, black, result, moves_count, duration, time_control,
+                opening.
+
+        Returns:
+            None
+        """
         game_record = {
             "game_id": game_data.get("id"),
             "white_player": game_data.get("white"),
@@ -21,13 +63,22 @@ class StatisticsService:
             "duration": game_data.get("duration", 0),
             "timestamp": datetime.now().isoformat(),
             "time_control": game_data.get("time_control", ""),
-            "opening": game_data.get("opening", "Unknown")
+            "opening": game_data.get("opening", "Unknown"),
         }
         self.games_history.append(game_record)
         self._update_player_stats(game_record)
 
     def summary(self, wins: int, losses: int, draws: int) -> dict:
-        """Получить краткую сводку."""
+        """Сформировать краткую сводку по W/L/D и winrate.
+
+        Args:
+            wins: Количество побед.
+            losses: Количество поражений.
+            draws: Количество ничьих.
+
+        Returns:
+            dict: Словарь сводки (wins, losses, draws, total, win_rate).
+        """
         total = wins + losses + draws
         win_rate = (wins / total * 100) if total > 0 else 0
         return {
@@ -35,25 +86,52 @@ class StatisticsService:
             "losses": losses,
             "draws": draws,
             "total": total,
-            "win_rate": round(win_rate, 2)
+            "win_rate": round(win_rate, 2),
         }
 
     def get_player_stats(self, player_name: str) -> dict:
-        """Получить статистику игрока."""
+        """Получить агрегированную статистику игрока.
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            dict: Словарь статистики. Если игрок неизвестен — возвращается
+            «пустая» структура с нулевыми значениями.
+        """
         if player_name not in self.player_stats:
             return self._empty_stats()
         return self.player_stats[player_name]
 
     def get_recent_games(self, player_name: str, limit: int = 10) -> List[dict]:
-        """Получить последние игры игрока."""
+        """Получить последние партии, в которых участвовал игрок.
+
+        Args:
+            player_name: Имя игрока.
+            limit: Максимальное число возвращаемых записей.
+
+        Returns:
+            List[dict]: Список записей партий (не более limit).
+        """
         player_games = [
-            game for game in self.games_history
+            game
+            for game in self.games_history
             if game["white_player"] == player_name or game["black_player"] == player_name
         ]
         return player_games[-limit:]
 
     def get_win_streak(self, player_name: str) -> int:
-        """Получить текущую серию побед."""
+        """Получить текущую серию побед игрока.
+
+        Сервис идёт от самых последних партий к более ранним и считает число
+        подряд идущих побед.
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            int: Длина серии побед (0, если текущая партия не победа или игр нет).
+        """
         recent_games = self.get_recent_games(player_name, 100)
         streak = 0
         for game in reversed(recent_games):
@@ -64,7 +142,14 @@ class StatisticsService:
         return streak
 
     def get_performance_by_color(self, player_name: str) -> dict:
-        """Статистика по цветам."""
+        """Получить статистику игрока отдельно для белых и чёрных.
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            dict: Словарь с ключами "white" и "black", значения — summary().
+        """
         white_stats = {"wins": 0, "losses": 0, "draws": 0}
         black_stats = {"wins": 0, "losses": 0, "draws": 0}
 
@@ -76,12 +161,19 @@ class StatisticsService:
 
         return {
             "white": self.summary(white_stats["wins"], white_stats["losses"], white_stats["draws"]),
-            "black": self.summary(black_stats["wins"], black_stats["losses"], black_stats["draws"])
+            "black": self.summary(black_stats["wins"], black_stats["losses"], black_stats["draws"]),
         }
 
     def get_opening_stats(self, player_name: str) -> Dict[str, dict]:
-        """Статистика по дебютам."""
-        opening_stats = {}
+        """Получить статистику игрока по дебютам.
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            Dict[str, dict]: Словарь (дебют → {wins, losses, draws, games}).
+        """
+        opening_stats: Dict[str, dict] = {}
         for game in self.games_history:
             if game["white_player"] == player_name or game["black_player"] == player_name:
                 opening = game["opening"]
@@ -99,8 +191,15 @@ class StatisticsService:
         return opening_stats
 
     def get_time_control_stats(self, player_name: str) -> Dict[str, dict]:
-        """Статистика по контролю времени."""
-        time_stats = {}
+        """Получить статистику игрока по контролям времени.
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            Dict[str, dict]: Словарь (time_control → {wins, losses, draws}).
+        """
+        time_stats: Dict[str, dict] = {}
         for game in self.games_history:
             if game["white_player"] == player_name or game["black_player"] == player_name:
                 tc = game["time_control"]
@@ -117,9 +216,17 @@ class StatisticsService:
         return time_stats
 
     def get_average_game_length(self, player_name: str) -> float:
-        """Средняя длина игры в ходах."""
+        """Вычислить среднюю длину партии игрока (в полуходах/ходах из записи).
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            float: Среднее количество ходов (0.0, если игр нет).
+        """
         player_games = [
-            game for game in self.games_history
+            game
+            for game in self.games_history
             if game["white_player"] == player_name or game["black_player"] == player_name
         ]
         if not player_games:
@@ -129,22 +236,48 @@ class StatisticsService:
         return total_moves / len(player_games)
 
     def get_peak_rating(self, player_name: str) -> int:
-        """Получить пиковый рейтинг."""
+        """Получить пиковый рейтинг игрока (если хранится в агрегатах).
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            int: Пиковое значение рейтинга либо значение по умолчанию (1200).
+        """
         if player_name in self.player_stats:
             return self.player_stats[player_name].get("peak_rating", 1200)
         return 1200
 
     def get_games_by_period(self, player_name: str, days: int = 7) -> List[dict]:
-        """Получить игры за период."""
+        """Получить список партий игрока за последние N дней.
+
+        Args:
+            player_name: Имя игрока.
+            days: Глубина окна в днях.
+
+        Returns:
+            List[dict]: Список записей партий, попадающих в период.
+        """
         cutoff_date = datetime.now() - timedelta(days=days)
         return [
-            game for game in self.games_history
+            game
+            for game in self.games_history
             if (game["white_player"] == player_name or game["black_player"] == player_name)
             and datetime.fromisoformat(game["timestamp"]) > cutoff_date
         ]
 
     def get_activity_heatmap(self, player_name: str) -> Dict[str, int]:
-        """Тепловая карта активности по дням недели."""
+        """Построить «тепловую карту» активности по дням недели.
+
+        Ключи словаря — номера дней недели ("0".."6"), где 0 = понедельник
+        (как в datetime.weekday()).
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            Dict[str, int]: Количество партий по дням недели.
+        """
         heatmap = {str(i): 0 for i in range(7)}
         for game in self.games_history:
             if game["white_player"] == player_name or game["black_player"] == player_name:
@@ -154,8 +287,15 @@ class StatisticsService:
         return heatmap
 
     def get_opponent_stats(self, player_name: str) -> Dict[str, dict]:
-        """Статистика против конкретных оппонентов."""
-        opponent_stats = {}
+        """Получить статистику игрока против конкретных оппонентов.
+
+        Args:
+            player_name: Имя игрока.
+
+        Returns:
+            Dict[str, dict]: Словарь (имя оппонента → {wins, losses, draws}).
+        """
+        opponent_stats: Dict[str, dict] = {}
         for game in self.games_history:
             opponent = None
             if game["white_player"] == player_name:
@@ -177,7 +317,14 @@ class StatisticsService:
         return opponent_stats
 
     def _update_player_stats(self, game: dict) -> None:
-        """Обновить статистику игроков."""
+        """Обновить агрегированную статистику по игрокам на основе партии.
+
+        Args:
+            game: Унифицированная запись партии из games_history.
+
+        Returns:
+            None
+        """
         for player in [game["white_player"], game["black_player"]]:
             if player not in self.player_stats:
                 self.player_stats[player] = self._empty_stats()
@@ -193,7 +340,15 @@ class StatisticsService:
                 stats["draws"] += 1
 
     def _is_win(self, game: dict, player_name: str) -> bool:
-        """Проверить, выиграл ли игрок."""
+        """Проверить, является ли партия победой для указанного игрока.
+
+        Args:
+            game: Запись партии.
+            player_name: Имя игрока.
+
+        Returns:
+            bool: True, если результат партии соответствует победе игрока.
+        """
         result = game["result"]
         if game["white_player"] == player_name:
             return result == "1-0"
@@ -202,7 +357,15 @@ class StatisticsService:
         return False
 
     def _is_loss(self, game: dict, player_name: str) -> bool:
-        """Проверить, проиграл ли игрок."""
+        """Проверить, является ли партия поражением для указанного игрока.
+
+        Args:
+            game: Запись партии.
+            player_name: Имя игрока.
+
+        Returns:
+            bool: True, если результат партии соответствует поражению игрока.
+        """
         result = game["result"]
         if game["white_player"] == player_name:
             return result == "0-1"
@@ -211,7 +374,16 @@ class StatisticsService:
         return False
 
     def _update_color_stats(self, stats: dict, result: str, color: str) -> None:
-        """Обновить статистику по цвету."""
+        """Обновить счётчики побед/поражений/ничьих для игры данным цветом.
+
+        Args:
+            stats: Словарь-счётчик с ключами wins/losses/draws.
+            result: Результат партии ("1-0", "0-1", "1/2-1/2").
+            color: Цвет игрока в данной партии ("white" или "black").
+
+        Returns:
+            None
+        """
         if (color == "white" and result == "1-0") or (color == "black" and result == "0-1"):
             stats["wins"] += 1
         elif (color == "white" and result == "0-1") or (color == "black" and result == "1-0"):
@@ -220,11 +392,15 @@ class StatisticsService:
             stats["draws"] += 1
 
     def _empty_stats(self) -> dict:
-        """Пустая статистика."""
+        """Создать «пустую» структуру статистики для нового игрока.
+
+        Returns:
+            dict: Структура с нулевыми счётчиками и дефолтными значениями.
+        """
         return {
             "games_played": 0,
             "wins": 0,
             "losses": 0,
             "draws": 0,
-            "peak_rating": 1200
+            "peak_rating": 1200,
         }
