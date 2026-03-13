@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetworkChess — Сетевая шахматная игра</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <div class="logo">
+        <span class="logo__icon">♞</span>
+        <span class="logo__text">NetworkChess</span>
+      </div>
+      <nav class="nav">
+        <a href="#about" class="nav__link">О проекте</a>
+        <a href="#features" class="nav__link">Возможности</a>
+        <a href="#architecture" class="nav__link">Архитектура</a>
+        <a href="#tech" class="nav__link">Технологии</a>
+        <a href="#stages" class="nav__link">Этапы</a>
+        <a href="#docs" class="nav__link">Документы</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero__bg-grid"></div>
+    <div class="container hero__content">
+      <div class="hero__badge">Лабораторная работа · Программная инженерия</div>
+      <h1 class="hero__title">Network<span class="accent">Chess</span></h1>
+      <p class="hero__subtitle">Сетевая шахматная игра с локальным режимом, игрой против искусственного интеллекта и системой уровней сложности 1–100</p>
+      <div class="hero__pills">
+        <span class="pill">Локальная партия</span>
+        <span class="pill">Сетевая игра</span>
+        <span class="pill">ИИ 1–100</span>
+        <span class="pill">История ходов</span>
+        <span class="pill">Статистика</span>
+      </div>
+    </div>
+    <div class="hero__scroll-hint">↓</div>
+  </section>
+
+  <section id="about" class="section section--light">
+    <div class="container">
+      <div class="section__label">01 — О проекте</div>
+      <h2 class="section__title">Что такое NetworkChess?</h2>
+      <div class="about__grid">
+        <div class="about__text">
+          <p>NetworkChess — это учебный программный проект сетевой шахматной игры, разработанный в рамках дисциплины «Профессиональная практика программной инженерии». Проект демонстрирует модульный подход к разработке программного продукта, использование Git, документирование кода и создание сопроводительной документации.</p>
+          <p>Приложение предназначено для организации шахматных партий между пользователями по сети, для локальной игры на одном устройстве и для игры против компьютерного соперника с регулируемой сложностью.</p>
+        </div>
+        <div class="about__stats">
+          <div class="stat-card"><div class="stat-card__num">18</div><div class="stat-card__label">модулей в проекте</div></div>
+          <div class="stat-card"><div class="stat-card__num">3</div><div class="stat-card__label">режима игры</div></div>
+          <div class="stat-card"><div class="stat-card__num">6</div><div class="stat-card__label">этапов лабораторных работ</div></div>
+          <div class="stat-card"><div class="stat-card__num">100</div><div class="stat-card__label">уровней сложности ИИ</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section section--dark">
+    <div class="container">
+      <div class="section__label">02 — Возможности</div>
+      <h2 class="section__title">Основные возможности</h2>
+      <div class="features__grid">
+        <div class="feature-card"><div class="feature-card__icon">♟️</div><h3 class="feature-card__title">Локальная игра</h3><p class="feature-card__text">Запуск стандартной шахматной партии на одном устройстве с поочерёдным выполнением ходов двумя игроками.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">🌐</div><h3 class="feature-card__title">Сетевая партия</h3><p class="feature-card__text">Подключение к серверу матча, синхронизация состояния доски и передача игровых действий между участниками.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">🤖</div><h3 class="feature-card__title">Игра против ИИ</h3><p class="feature-card__text">Возможность играть против компьютерного соперника с настраиваемой сложностью от 1 до 100.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">✔️</div><h3 class="feature-card__title">Проверка ходов</h3><p class="feature-card__text">Контроль корректности игровых действий, проверка правил перемещения фигур и специальных состояний партии.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">💾</div><h3 class="feature-card__title">Сохранение партий</h3><p class="feature-card__text">Сохранение текущего состояния игры, параметров партии и последующая загрузка данных без потери прогресса.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">📈</div><h3 class="feature-card__title">Статистика</h3><p class="feature-card__text">Ведение истории игр, учёт побед и поражений, просмотр сведений о ранее завершённых матчах.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">💬</div><h3 class="feature-card__title">Чат игроков</h3><p class="feature-card__text">Обмен текстовыми сообщениями между участниками сетевой партии и вывод служебных уведомлений.</p></div>
+        <div class="feature-card"><div class="feature-card__icon">⚙️</div><h3 class="feature-card__title">Настройки</h3><p class="feature-card__text">Изменение параметров интерфейса, времени партии, уведомлений и других характеристик приложения.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture" class="section section--light">
+    <div class="container">
+      <div class="section__label">03 — Архитектура</div>
+      <h2 class="section__title">Модульная архитектура</h2>
+      <p class="section__desc">Программный продукт построен по модульному принципу. Каждый компонент отвечает за отдельную функциональную часть системы и взаимодействует с остальными модулями через общую структуру проекта.</p>
+      <div class="modules__grid">
+        <div class="module-item"><span class="module-item__num">01</span><span class="module-item__name">Модуль пользовательского интерфейса</span></div>
+        <div class="module-item"><span class="module-item__num">02</span><span class="module-item__name">Модуль визуализации шахматной доски и фигур</span></div>
+        <div class="module-item"><span class="module-item__num">03</span><span class="module-item__name">Модуль игровой логики</span></div>
+        <div class="module-item"><span class="module-item__num">04</span><span class="module-item__name">Модуль валидации ходов</span></div>
+        <div class="module-item"><span class="module-item__num">05</span><span class="module-item__name">Модуль управления состоянием партии</span></div>
+        <div class="module-item"><span class="module-item__num">06</span><span class="module-item__name">Модуль искусственного интеллекта</span></div>
+        <div class="module-item"><span class="module-item__num">07</span><span class="module-item__name">Модуль управления уровнями сложности</span></div>
+        <div class="module-item"><span class="module-item__num">08</span><span class="module-item__name">Сетевой модуль</span></div>
+        <div class="module-item"><span class="module-item__num">09</span><span class="module-item__name">Серверный модуль управления матчами</span></div>
+        <div class="module-item"><span class="module-item__num">10</span><span class="module-item__name">Модуль статистики и истории партий</span></div>
+        <div class="module-item"><span class="module-item__num">11</span><span class="module-item__name">Модуль сохранения и загрузки данных</span></div>
+        <div class="module-item"><span class="module-item__num">12</span><span class="module-item__name">Модуль безопасности и журналирования</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--accent">
+    <div class="container">
+      <div class="section__label">04 — Преимущества</div>
+      <h2 class="section__title">Преимущества проекта</h2>
+      <div class="advantages__grid">
+        <div class="advantage-block"><div class="advantage-block__icon">🧩</div><h3>Модульность</h3><p>Система легко расширяется за счёт разделения функций между независимыми компонентами проекта.</p></div>
+        <div class="advantage-block"><div class="advantage-block__icon">🔄</div><h3>Гибкость режимов</h3><p>Поддерживаются локальная игра, сетевой режим и игра против ИИ в рамках единой архитектуры.</p></div>
+        <div class="advantage-block"><div class="advantage-block__icon">🛡️</div><h3>Надёжность</h3><p>Присутствуют механизмы проверки ходов, сохранения данных и базового контроля сетевых действий.</p></div>
+        <div class="advantage-block"><div class="advantage-block__icon">📚</div><h3>Документированность</h3><p>Проект сопровождается docstring, пользовательским руководством и отчётами по всем этапам разработки.</p></div>
+        <div class="advantage-block"><div class="advantage-block__icon">📊</div><h3>Анализ партий</h3><p>История ходов и статистика позволяют просматривать сыгранные партии и оценивать результаты пользователя.</p></div>
+        <div class="advantage-block"><div class="advantage-block__icon">🔀</div><h3>Git-ориентированная разработка</h3><p>Проект разрабатывается в репозитории Git с использованием ветвления, коммитов и восстановления ревизий.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark">
+    <div class="container">
+      <div class="section__label">05 — Примеры режимов</div>
+      <h2 class="section__title">Примеры режимов работы</h2>
+      <div class="examples__grid">
+        <div class="example-card">
+          <div class="example-card__header"><div class="example-card__dots"><span></span><span></span><span></span></div><span class="example-card__filename">Локальная партия</span></div>
+          <div class="example-card__body example-card__body--text">
+            <div class="mock-line mock-line--full"></div><div class="mock-line mock-line--wide"></div><div class="mock-line mock-line--medium"></div><div class="mock-line mock-line--full"></div><div class="mock-line mock-line--short"></div>
+          </div>
+          <div class="example-card__footer"><h3>Игра на одном устройстве</h3><p>Два игрока выполняют ходы по очереди, а система проверяет корректность действий и хранит историю партии.</p></div>
+        </div>
+        <div class="example-card">
+          <div class="example-card__header"><div class="example-card__dots"><span></span><span></span><span></span></div><span class="example-card__filename">Сетевая игра</span></div>
+          <div class="example-card__body example-card__body--code">
+            <div class="code-line"><span class="tok-var">client</span><span class="tok-pu"> = </span><span class="tok-fn">NetworkClient</span><span class="tok-pu">(</span><span class="tok-str">"127.0.0.1"</span><span class="tok-pu">, </span><span class="tok-num">9000</span><span class="tok-pu">)</span></div>
+            <div class="code-line"><span class="tok-fn">client.connect</span><span class="tok-pu">()</span></div>
+            <div class="code-line"><span class="tok-fn">client.send_move</span><span class="tok-pu">(</span><span class="tok-str">"e2"</span><span class="tok-pu">, </span><span class="tok-str">"e4"</span><span class="tok-pu">)</span></div>
+            <div class="code-line"><span class="tok-var">state</span><span class="tok-pu"> = </span><span class="tok-fn">client.receive_state</span><span class="tok-pu">()</span></div>
+          </div>
+          <div class="example-card__footer"><h3>Подключение к сетевому матчу</h3><p>Игровые действия передаются через сетевой модуль, а состояние доски синхронизируется между участниками.</p></div>
+        </div>
+        <div class="example-card">
+          <div class="example-card__header"><div class="example-card__dots"><span></span><span></span><span></span></div><span class="example-card__filename">Режим против ИИ</span></div>
+          <div class="example-card__body example-card__body--theme">
+            <div class="theme-preview">
+              <div class="theme-preview__half theme-preview__half--light"><div class="theme-icon">♘</div><div class="theme-label">Уровень 20</div><div class="theme-mockbar theme-mockbar--light"></div><div class="theme-mockbar theme-mockbar--light theme-mockbar--short"></div></div>
+              <div class="theme-preview__divider"></div>
+              <div class="theme-preview__half theme-preview__half--dark"><div class="theme-icon">♛</div><div class="theme-label">Уровень 80</div><div class="theme-mockbar theme-mockbar--dark"></div><div class="theme-mockbar theme-mockbar--dark theme-mockbar--short"></div></div>
+            </div>
+          </div>
+          <div class="example-card__footer"><h3>Игра против искусственного интеллекта</h3><p>Пользователь выбирает уровень сложности, после чего модуль ИИ рассчитывает ходы в соответствии с параметрами выбранного режима.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tech" class="section section--light">
+    <div class="container">
+      <div class="section__label">06 — Технологии</div>
+      <h2 class="section__title">Используемые технологии</h2>
+      <div class="tech__grid">
+        <div class="tech-item"><div class="tech-item__icon">🐍</div><div class="tech-item__name">Python</div><div class="tech-item__desc">Основной язык реализации логики проекта и модульной структуры системы.</div></div>
+        <div class="tech-item"><div class="tech-item__icon">🖥️</div><div class="tech-item__name">Tkinter / Qt</div><div class="tech-item__desc">Средства построения графического интерфейса шахматного приложения.</div></div>
+        <div class="tech-item"><div class="tech-item__icon">🔀</div><div class="tech-item__name">Git</div><div class="tech-item__desc">Система контроля версий для сопровождения всех этапов разработки.</div></div>
+        <div class="tech-item"><div class="tech-item__icon">🌐</div><div class="tech-item__name">HTML / CSS</div><div class="tech-item__desc">Технологии создания веб-сайта проекта и публикации результатов на GitHub Pages.</div></div>
+        <div class="tech-item"><div class="tech-item__icon">📄</div><div class="tech-item__name">DocBook / HTA</div><div class="tech-item__desc">Средства подготовки документации, руководства пользователя и вспомогательных материалов.</div></div>
+        <div class="tech-item"><div class="tech-item__icon">🧪</div><div class="tech-item__name">Локальные тесты</div><div class="tech-item__desc">Проверка модулей игровой логики, восстановления ревизий и корректности документации.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stages" class="section section--dark">
+    <div class="container">
+      <div class="section__label">07 — Этапы</div>
+      <h2 class="section__title">Этапы выполнения лабораторных работ</h2>
+      <div class="stages__list">
+        <div class="stage-item"><div class="stage-item__line"></div><div class="stage-item__dot"></div><div class="stage-item__content"><div class="stage-item__num">Этап 1</div><h3 class="stage-item__title">Проектирование модулей</h3><p class="stage-item__text">Выбор темы проекта, формирование модульной архитектуры и создание репозитория с планом разработки.</p></div></div>
+        <div class="stage-item"><div class="stage-item__line"></div><div class="stage-item__dot"></div><div class="stage-item__content"><div class="stage-item__num">Этап 2</div><h3 class="stage-item__title">Работа с ветками Git</h3><p class="stage-item__text">Создание тематических веток проекта, распределение файлов по модулям и разрешение конфликта слияния.</p></div></div>
+        <div class="stage-item"><div class="stage-item__line"></div><div class="stage-item__dot"></div><div class="stage-item__content"><div class="stage-item__num">Этап 3</div><h3 class="stage-item__title">Восстановление ревизий</h3><p class="stage-item__text">Удаление ключевого файла проекта и его последующее восстановление из предыдущей версии репозитория.</p></div></div>
+        <div class="stage-item"><div class="stage-item__line"></div><div class="stage-item__dot"></div><div class="stage-item__content"><div class="stage-item__num">Этап 4</div><h3 class="stage-item__title">Документирование кода</h3><p class="stage-item__text">Добавление докблоков, формирование DocBook XML и подготовка справочного руководства проекта.</p></div></div>
+        <div class="stage-item"><div class="stage-item__line"></div><div class="stage-item__dot"></div><div class="stage-item__content"><div class="stage-item__num">Этап 5</div><h3 class="stage-item__title">Ручная документация</h3><p class="stage-item__text">Создание пользовательского руководства в формате HTA и подготовка отчёта с иллюстрациями интерфейса.</p></div></div>
+        <div class="stage-item"><div class="stage-item__dot"></div><div class="stage-item__content"><div class="stage-item__num">Этап 6</div><h3 class="stage-item__title">Разработка веб-сайта</h3><p class="stage-item__text">Создание одностраничного сайта проекта NetworkChess и публикация результата в репозитории GitHub.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="docs" class="section section--light">
+    <div class="container">
+      <div class="section__label">08 — Документы</div>
+      <h2 class="section__title">Лабораторные работы</h2>
+      <p class="section__desc">Отчёты по предыдущим этапам выполнения проекта, размещённые во внутреннем каталоге репозитория.</p>
+      <div class="docs__grid">
+        <a class="doc-card" href="docs/Лаб1.docx" download><div class="doc-card__icon">📄</div><div class="doc-card__body"><div class="doc-card__title">Лабораторная работа №1</div><div class="doc-card__sub">Проектирование модульной архитектуры</div></div><div class="doc-card__badge">.docx ↓</div></a>
+        <a class="doc-card" href="docs/Лаб2.docx" download><div class="doc-card__icon">📄</div><div class="doc-card__body"><div class="doc-card__title">Лабораторная работа №2</div><div class="doc-card__sub">Работа с ветками Git и конфликтами</div></div><div class="doc-card__badge">.docx ↓</div></a>
+        <a class="doc-card" href="docs/Лаб3.docx" download><div class="doc-card__icon">📄</div><div class="doc-card__body"><div class="doc-card__title">Лабораторная работа №3</div><div class="doc-card__sub">Восстановление данных из ранних ревизий</div></div><div class="doc-card__badge">.docx ↓</div></a>
+        <a class="doc-card" href="docs/Лаб4.docx" download><div class="doc-card__icon">📄</div><div class="doc-card__body"><div class="doc-card__title">Лабораторная работа №4</div><div class="doc-card__sub">Создание самодокументирующегося кода</div></div><div class="doc-card__badge">.docx ↓</div></a>
+        <a class="doc-card" href="docs/Лаб5.docx" download><div class="doc-card__icon">📄</div><div class="doc-card__body"><div class="doc-card__title">Лабораторная работа №5</div><div class="doc-card__sub">Разработка ручной документации</div></div><div class="doc-card__badge">.docx ↓</div></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--conclusion">
+    <div class="container conclusion__inner">
+      <div class="section__label">09 — Заключение</div>
+      <h2 class="section__title">Заключение</h2>
+      <div class="conclusion__text">
+        <p>В ходе выполнения лабораторной работы был разработан одностраничный веб-сайт проекта NetworkChess. Сайт объединяет результаты предыдущих этапов проектирования, документирования и сопровождения программного продукта.</p>
+        <p>Созданная страница позволяет представить назначение программы, её основные возможности, модульную архитектуру, используемые технологии и историю лабораторных работ в удобной для просмотра форме.</p>
+        <p>Итоговый веб-сайт может использоваться как публичная презентация проекта и как точка доступа к отчётам, размещённым внутри репозитория.</p>
+      </div>
+      <div class="conclusion__badge">NetworkChess · Профессиональная практика программной инженерии</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__logo"><span class="logo__icon">♞</span>NetworkChess</div>
+      <div class="footer__text">Учебный проект по дисциплине «Профессиональная практика программной инженерии»</div>
+    </div>
+  </footer>
+</body>
+</html>
